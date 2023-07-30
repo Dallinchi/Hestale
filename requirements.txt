@@ -1,0 +1,8 @@
+optparse==1.5.3
+hashlib
+time
+sys
+string
+random
+pyperclip
+termcolor

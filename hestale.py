@@ -85,10 +85,11 @@ class CLInterface:
     @passphrase.setter
     def passphrase(self, value):
         self.passphrase_control.passphrase = value
-        # Если фраза прошла проверку
+        # Если фраза прошла проверку то сохраняем ее
         if self.passphrase_control.passphrase:
             if self._opts.save:
                 self.passphrase_control.save()
+                exit()
 
     @property
     def beta_version(self):
