@@ -9,7 +9,7 @@ import pyperclip
 import termcolor
 
 
-# IMPORTANT! Добавить обстрактный класс для интерфейса:
+# IMPORTANT! Добавить абстрактный класс для интерфейса:
 class CLInterface:
     def __init__(self) -> None:
         self.__parser = optparse.OptionParser()
@@ -99,7 +99,10 @@ class Passphrase:
     def __init__(self, path_to_passphrase: str = "passphrase.txt") -> None:
         self.__passphrase = ""
         self.path_to_passphrase = path_to_passphrase
-
+        
+        with open(self.path_to_passphrase, "a", encoding="utf-8") as file:
+            pass
+            
     @property
     def passphrase(self):
         if not self.__passphrase:
