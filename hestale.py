@@ -70,13 +70,13 @@ class CLInterface:
     def password(self):
         if self._opts.password:
             return self._opts.password
-        return CLIDecor.serial_input("Password: ", 0.1, "green")
+        return CLIDecor.serial_input("Password: ", 0.05, "green")
 
     @property
     def static(self):
         if self._opts.static:
             return self._opts.static.lower()
-        return CLIDecor.serial_input("Static: ", 0.1, "green")
+        return CLIDecor.serial_input("Static: ", 0.05, "green")
 
     @property
     def passphrase(self):
@@ -100,10 +100,10 @@ class Passphrase:
     def __init__(self, path_to_passphrase: str = "passphrase.txt") -> None:
         self.__passphrase = ""
         self.path_to_passphrase = path_to_passphrase
-        
+
         with open(self.path_to_passphrase, "a", encoding="utf-8") as file:
             pass
-            
+
     @property
     def passphrase(self):
         if not self.__passphrase:
@@ -128,22 +128,17 @@ class Passphrase:
 class Hestale:
     # Генерируем кодовую фразу хеш-функцией sha256, и возвращаем первые 20 символов
     @staticmethod
-    def generate_key_from_phrase(phrase):
+    def generate_key_from_word(phrase):
         sha256 = hashlib.sha256()
         sha256.update(phrase.encode())
         return sha256.hexdigest()[:20]
 
     @staticmethod
     def mix_words(word1, word2, key):
-        #  Преобразуем данные к длине ключа
-        while len(key) > len(word1):
-            word1 += word1
-
-        while len(key) > len(word2):
-            word2 += word2
-
-        word1 = word1[: len(key)]
-        word2 = word2[: len(key)]
+        # Хешируем данные
+        word1 = Hestale.generate_key_from_word(word1)
+        word2 = Hestale.generate_key_from_word(word2)
+        key = Hestale.generate_key_from_word(key)
 
         # преобразуем слова и ключ в бинарный формат
         word1_bin = "".join(format(ord(c), "08b") for c in word1)
@@ -179,7 +174,7 @@ class Control:
         password = Hestale.mix_words(
             self.static,
             self.password,
-            Hestale.generate_key_from_phrase(self.passphrase),
+            self.passphrase,
         )
         pyperclip.copy(password)
         return password
@@ -207,7 +202,7 @@ class CLIDecor:
             sys.stdout.write(termcolor.colored(char, color=color))
             sys.stdout.flush()
         return input()
-    
+
     @classmethod
     def serial_output(
         cls, text: str, interval: float = 0.5, color: str = "yellow"
@@ -239,8 +234,8 @@ class CLIDecor:
 if __name__ == "__main__":
     cli = CLInterface()
     control = Control(interface=cli)
-    
-    CLIDecor.serial_output('-- Your Password --', interval = 0.1, color = 'blue')
+
+    CLIDecor.serial_output("-- Your Password --", interval=0.05, color="blue")
     CLIDecor.shuffle_output(control.get_password())
     print()
     CLIDecor.serial_input("Enter for exit..", 0.1, "magenta")
