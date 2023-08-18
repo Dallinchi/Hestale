@@ -2,6 +2,7 @@ import optparse
 import hashlib
 import time
 import sys
+import os
 import string
 import random
 
@@ -98,6 +99,8 @@ class CLInterface:
 
 class Passphrase:
     def __init__(self, path_to_passphrase: str = "passphrase.txt") -> None:
+        self.__dir_path = os.path.dirname(os.path.abspath(__file__))
+        path_to_passphrase = os.path.join(self.__dir_path, path_to_passphrase)
         self.__passphrase = ""
         self.path_to_passphrase = path_to_passphrase
 
